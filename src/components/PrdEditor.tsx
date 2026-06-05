@@ -104,7 +104,7 @@ export const PrdEditor: React.FC<PrdEditorProps> = ({
             className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono transition"
           />
           <p className="text-[10px] text-slate-550 mt-1.5 leading-normal">
-            Required to orchestrate the pipeline via Grok 2.
+            Required to orchestrate the pipeline via Grok 3.
           </p>
         </div>
       )}

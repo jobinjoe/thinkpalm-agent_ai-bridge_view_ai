@@ -163,62 +163,44 @@ export function getTelemetrySchema(vesselType: string): TelemetryField[] {
   ];
 }
 
-/**
- * Calls xAI Grok API.
- * Tries 'grok-2-latest', falling back to 'grok-beta' if needed.
- */
 export async function callGrokAPI(
   prompt: string,
   apiKey: string,
-  responseJson = false
+  responseJson: boolean = false
 ): Promise<string> {
-  const models = ['grok-2-latest', 'grok-beta'];
-  let lastError: Error | null = null;
-
-  for (const model of models) {
-    try {
-      const body: any = {
-        model: model,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
-      };
-
-      if (responseJson) {
-        body.response_format = {
-          type: 'json_object'
-        };
-      }
-
-      const response = await fetch('https://api.x.ai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+  const response = await fetch("https://api.x.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "grok-3",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
         },
-        body: JSON.stringify(body)
-      });
+      ],
+      temperature: 0.3,
+      max_tokens: 4000,
+      ...(responseJson ? { response_format: { type: "json_object" } } : {}),
+    }),
+  });
 
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errText}`);
-      }
-
-      const data = await response.json();
-      const text = data.choices?.[0]?.message?.content;
-      if (!text) {
-        throw new Error('Empty response from Grok model');
-      }
-
-      return text;
-    } catch (err) {
-      console.warn(`Grok model ${model} failed, trying fallback:`, err);
-      lastError = err instanceof Error ? err : new Error(String(err));
-    }
+  if (!response.ok) {
+    let errorMessage = response.statusText;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error?.message || response.statusText;
+    } catch {}
+    throw new Error(`Grok API Error: ${errorMessage}`);
   }
 
-  throw lastError || new Error('Grok API call failed');
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+  if (!content) {
+    throw new Error("Empty response from Grok model");
+  }
+  return content;
 }

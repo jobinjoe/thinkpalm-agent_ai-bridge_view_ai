@@ -3,7 +3,7 @@
 
 BridgeView AI is an AI-powered software engineering accelerator designed for ThinkPalm engineers. It converts complex maritime Product Requirements Documents (PRDs) into interactive React dashboards built with TypeScript, Tailwind CSS, and Lucide icons. 
 
-The application utilizes a collaborative multi-agent pipeline powered by Grok 2 to perform structural analysis, synthesize production-ready code, run quality control audits, and export functional developer workspaces to StackBlitz with a single click.
+The application utilizes a collaborative multi-agent pipeline powered by Grok 3 to perform structural analysis, synthesize production-ready code, run quality control audits, and export functional developer workspaces to StackBlitz with a single click.
 
 ---
 
@@ -50,7 +50,7 @@ graph TD
 
 * **Framework**: React + TypeScript + Vite
 * **Styling**: Tailwind CSS + Glassmorphic UI Tokens + Lucide Icons
-* **Orchestrator LLM**: xAI Grok 2 API
+* **Orchestrator LLM**: xAI Grok 3 API
 * **Integration**: StackBlitz SDK (WebContainers)
 * **Storage**: Browser LocalStorage (Memory Registry)
 

@@ -57,7 +57,7 @@ function App() {
 
         <div className="flex items-center space-x-2 bg-slate-950 border border-slate-850 px-3 py-1.5 rounded-lg text-[9px] text-slate-500 font-extrabold tracking-wider uppercase">
           <Cpu className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Grok 2 Pipeline Ready</span>
+          <span>Grok 3 Pipeline Ready</span>
         </div>
       </header>
 
