@@ -1,9 +1,9 @@
 import type { DashboardLayout } from './types';
-import { callGeminiAPI } from './tools';
+import { callGrokAPI } from './tools';
 
-export class GeminiCoder {
+export class GrokCoder {
   /**
-   * Generates Tailwind-styled React component code from the dashboard layout using Gemini.
+   * Generates Tailwind-styled React component code from the dashboard layout using Grok.
    */
   async generateCode(
     layout: DashboardLayout,
@@ -13,22 +13,22 @@ export class GeminiCoder {
     log('Initiating React component code generation...', 'info');
 
     if (!apiKey || apiKey.trim() === '') {
-      log('Gemini error', 'error');
-      throw new Error('Gemini API key is required');
+      log('Grok error', 'error');
+      throw new Error('Grok API key is required');
     }
 
-    log('Delegating React code generation to Gemini agents...', 'info');
+    log('Delegating React code generation to Grok agents...', 'info');
     try {
-      const code = await this.queryGeminiAPI(layout, apiKey, log);
-      log('Gemini completed code generation successfully.', 'info');
+      const code = await this.queryGrokAPI(layout, apiKey, log);
+      log('Grok completed code generation successfully.', 'info');
       return code;
     } catch (err) {
-      log('Gemini error', 'error');
-      throw new Error(`Gemini API request failed: ${err instanceof Error ? err.message : String(err)}`);
+      log('Grok error', 'error');
+      throw new Error(`Grok API request failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  private async queryGeminiAPI(layout: DashboardLayout, apiKey: string, _log: (msg: string) => void): Promise<string> {
+  private async queryGrokAPI(layout: DashboardLayout, apiKey: string, _log: (msg: string) => void): Promise<string> {
     const prompt = `You are a Principal React & Tailwind Code Generator Agent.
 Create a complete, single-file React component representing the following maritime dashboard layout.
 The component must be written in TypeScript, compile cleanly, and use Tailwind CSS styles.
@@ -49,7 +49,7 @@ Requirements for the generated code:
 
 Return ONLY raw TSX code. Do NOT wrap in markdown block quotes.`;
 
-    let text = await callGeminiAPI(prompt, apiKey, false);
+    let text = await callGrokAPI(prompt, apiKey, false);
 
     text = text
       .replace(/```typescript/g, '')

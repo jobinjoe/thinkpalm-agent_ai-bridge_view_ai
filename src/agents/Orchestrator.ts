@@ -1,12 +1,12 @@
-import { GeminiArchitect } from './GeminiArchitect';
-import { GeminiCoder } from './GeminiCoder';
-import { GeminiInspector } from './GeminiInspector';
+import { GrokArchitect } from './GrokArchitect';
+import { GrokCoder } from './GrokCoder';
+import { GrokInspector } from './GrokInspector';
 import type { PipelineSession, AgentMessage, LongTermMemoryItem } from './types';
 
 export class Orchestrator {
-  private architect = new GeminiArchitect();
-  private coder = new GeminiCoder();
-  private inspector = new GeminiInspector();
+  private architect = new GrokArchitect();
+  private coder = new GrokCoder();
+  private inspector = new GrokInspector();
 
   /**
    * Runs the collaborative agentic pipeline to build a maritime dashboard.
@@ -39,7 +39,7 @@ export class Orchestrator {
     };
 
     try {
-      addLog('System', 'info', 'Pipeline initialized. Allocating Gemini agents...');
+      addLog('System', 'info', 'Pipeline initialized. Allocating Grok agents...');
       
       // Step 1: Maritime Architect Agent
       session.status = 'analyzing';

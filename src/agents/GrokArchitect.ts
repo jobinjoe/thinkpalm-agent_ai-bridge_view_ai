@@ -1,9 +1,9 @@
 import type { DashboardLayout } from './types';
-import { callGeminiAPI } from './tools';
+import { callGrokAPI } from './tools';
 
-export class GeminiArchitect {
+export class GrokArchitect {
   /**
-   * Analyzes maritime PRD text and converts it into a structured layout design using Gemini.
+   * Analyzes maritime PRD text and converts it into a structured layout design using Grok.
    */
   async analyzePRD(
     prdText: string,
@@ -13,25 +13,25 @@ export class GeminiArchitect {
     log('Starting analysis of the Maritime PRD spec...', 'info');
 
     if (!apiKey || apiKey.trim() === '') {
-      log('Gemini error', 'error');
-      throw new Error('Gemini API key is required');
+      log('Grok error', 'error');
+      throw new Error('Grok API key is required');
     }
 
-    log('Delegating analysis to Gemini agents...', 'info');
+    log('Delegating analysis to Grok agents...', 'info');
     try {
-      const result = await this.queryGeminiAPI(prdText, apiKey, log);
+      const result = await this.queryGrokAPI(prdText, apiKey, log);
       log(
-        `Gemini completed analysis. Formulated dashboard layout: "${result.title}" with ${result.widgets.length} components.`,
+        `Grok completed analysis. Formulated dashboard layout: "${result.title}" with ${result.widgets.length} components.`,
         'info'
       );
       return result;
     } catch (err) {
-      log('Gemini error', 'error');
-      throw new Error(`Gemini API request failed: ${err instanceof Error ? err.message : String(err)}`);
+      log('Grok error', 'error');
+      throw new Error(`Grok API request failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  private async queryGeminiAPI(prdText: string, apiKey: string, _log: (msg: string) => void): Promise<DashboardLayout> {
+  private async queryGrokAPI(prdText: string, apiKey: string, _log: (msg: string) => void): Promise<DashboardLayout> {
     const prompt = `You are a Senior Maritime Software Architect Agent at ThinkPalm.
 Analyze the provided Product Requirements Document (PRD) text and design an interactive dashboard layout.
 
@@ -59,7 +59,7 @@ Output a JSON object matching this schema:
 PRD Spec:
 ${prdText}`;
 
-    const text = await callGeminiAPI(prompt, apiKey, true);
+    const text = await callGrokAPI(prompt, apiKey, true);
     const result = JSON.parse(text.trim()) as DashboardLayout;
     return result;
   }

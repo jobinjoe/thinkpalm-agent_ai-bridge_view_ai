@@ -164,47 +164,43 @@ export function getTelemetrySchema(vesselType: string): TelemetryField[] {
 }
 
 /**
- * Calls Gemini API with fallback models to prevent capacity/demand and 503 errors.
- * Tries 'gemini-1.5-flash' first (high capacity, production stable), then 'gemini-2.5-flash'.
+ * Calls xAI Grok API.
+ * Tries 'grok-2-latest', falling back to 'grok-beta' if needed.
  */
-export async function callGeminiAPI(
+export async function callGrokAPI(
   prompt: string,
   apiKey: string,
   responseJson = false
 ): Promise<string> {
-  const models = ['gemini-1.5-flash', 'gemini-2.5-flash'];
+  const models = ['grok-2-latest', 'grok-beta'];
   let lastError: Error | null = null;
 
   for (const model of models) {
     try {
       const body: any = {
-        contents: [
+        model: model,
+        messages: [
           {
-            parts: [
-              {
-                text: prompt
-              }
-            ]
+            role: 'user',
+            content: prompt
           }
         ]
       };
 
       if (responseJson) {
-        body.generationConfig = {
-          responseMimeType: 'application/json'
+        body.response_format = {
+          type: 'json_object'
         };
       }
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        }
-      );
+      const response = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(body)
+      });
 
       if (!response.ok) {
         const errText = await response.text();
@@ -212,17 +208,17 @@ export async function callGeminiAPI(
       }
 
       const data = await response.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const text = data.choices?.[0]?.message?.content;
       if (!text) {
-        throw new Error('Empty response from model');
+        throw new Error('Empty response from Grok model');
       }
 
       return text;
     } catch (err) {
-      console.warn(`Gemini model ${model} failed, trying next fallback:`, err);
+      console.warn(`Grok model ${model} failed, trying fallback:`, err);
       lastError = err instanceof Error ? err : new Error(String(err));
     }
   }
 
-  throw lastError || new Error('Gemini API call failed');
+  throw lastError || new Error('Grok API call failed');
 }
