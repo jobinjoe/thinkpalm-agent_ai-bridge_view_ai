@@ -7,43 +7,29 @@ export class ClaudeInspector {
   async inspectCode(
     code: string,
     apiKey: string | undefined,
-    log: (msg: string, type?: 'info' | 'tool_call' | 'tool_response') => void
+    log: (msg: string, type?: 'info' | 'tool_call' | 'tool_response' | 'error') => void
   ): Promise<string> {
     log('Initiating code inspection and syntax validation...', 'info');
-    await new Promise(resolve => setTimeout(resolve, 800));
 
-    if (apiKey && apiKey.trim() !== '') {
-      log('Requesting Claude API to perform UX audit and linting check...', 'info');
-      try {
-        const inspectedCode = await this.queryClaudeAPI(code, apiKey, log);
-        log('Claude UX review completed. Styling and compilation check passed.', 'info');
-        return this.finalizeCode(inspectedCode, log);
-      } catch (err) {
-        log(`Claude inspection failed (${err instanceof Error ? err.message : String(err)}). Falling back to local inspection rules.`, 'info');
-      }
+    if (!apiKey || apiKey.trim() === '') {
+      log('Claude error', 'error');
+      throw new Error('Claude API key is required');
     }
 
-    log('Running compilation integrity check...', 'info');
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    if (!code.includes('import React')) {
-      log('Warning: Found missing React import. Injecting "import React" header...', 'info');
-      code = `import React from 'react';\n` + code;
+    log('Requesting Claude API to perform UX audit and linting check...', 'info');
+    try {
+      const inspectedCode = await this.queryClaudeAPI(code, apiKey, log);
+      log('Claude UX review completed. Styling and compilation check passed.', 'info');
+      return this.finalizeCode(inspectedCode, log);
+    } catch {
+      log('Claude error', 'error');
+      throw new Error('Claude API request failed');
     }
-
-    const openTags = (code.match(/<[a-zA-Z0-9]+[^>]*>/g) || []).length;
-    const closeTags = (code.match(/<\/[a-zA-Z0-9]+>/g) || []).length;
-    
-    log(`Markup tag analysis: Found ${openTags} opening nodes and ${closeTags} closing nodes.`, 'info');
-    log('Tailwind layout classes: Checked responsiveness triggers. Passed.', 'info');
-    
-    log('Code inspection passed. Code declared stable and production-ready.', 'info');
-    return this.finalizeCode(code, log);
   }
 
   private finalizeCode(
     code: string,
-    log: (msg: string, type?: 'info' | 'tool_call' | 'tool_response') => void
+    log: (msg: string, type?: 'info' | 'tool_call' | 'tool_response' | 'error') => void
   ): string {
     const fixed = ensureLucideImports(code);
     if (fixed !== code) {
@@ -68,7 +54,7 @@ ${code}`;
         'anthropic-version': '2023-06-01',
         'content-type': 'application/json',
         'dangerously-allow-browser': 'true'
-      } as any,
+      } as Record<string, string>,
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 4000,
@@ -87,12 +73,13 @@ ${code}`;
       throw new Error('Empty response from Claude API');
     }
 
-    text = text.replace(/```typescript/g, '')
-               .replace(/```tsx/g, '')
-               .replace(/```javascript/g, '')
-               .replace(/```jsx/g, '')
-               .replace(/```/g, '')
-               .trim();
+    text = text
+      .replace(/```typescript/g, '')
+      .replace(/```tsx/g, '')
+      .replace(/```javascript/g, '')
+      .replace(/```jsx/g, '')
+      .replace(/```/g, '')
+      .trim();
 
     return text;
   }
