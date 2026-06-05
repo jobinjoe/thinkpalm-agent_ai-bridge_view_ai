@@ -87,24 +87,24 @@ export const PrdEditor: React.FC<PrdEditorProps> = ({
               : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
           }`}
         >
-          ⚙️ Claude Settings
+          ⚙️ Gemini Settings
         </button>
       </div>
 
       {showSettings && (
-        <div className="bg-slate-950 border border-slate-800 rounded-lg p-3.5 mb-4 animate-fadeIn">
+        <div className="bg-slate-950 border border-slate-880 rounded-lg p-3.5 mb-4 animate-fadeIn">
           <label className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1.5">
-            Claude API Key (Optional)
+            Gemini API Key
           </label>
           <input
             type="password"
-            placeholder="sk-ant-api03..."
+            placeholder="AIzaSy..."
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             className="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono transition"
           />
-          <p className="text-[10px] text-slate-500 mt-1.5 leading-normal">
-            Uses Claude 3.5 Sonnet if provided. If blank, it runs in a high-fidelity interactive simulation mode.
+          <p className="text-[10px] text-slate-550 mt-1.5 leading-normal">
+            Required to orchestrate the pipeline via Gemini 2.5 Flash.
           </p>
         </div>
       )}
@@ -145,7 +145,7 @@ export const PrdEditor: React.FC<PrdEditorProps> = ({
         disabled={isLoading || !prdText.trim()}
         className="w-full mt-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold text-xs py-3 rounded-lg shadow-lg shadow-indigo-600/10 disabled:opacity-40 disabled:pointer-events-none hover:shadow-indigo-500/20 active:scale-[0.98] transition duration-200"
       >
-        {isLoading ? '🤖 running Claude agents...' : '⚓ Run Agent Pipeline'}
+        {isLoading ? '🤖 running Gemini agents...' : '⚓ Run Agent Pipeline'}
       </button>
     </div>
   );

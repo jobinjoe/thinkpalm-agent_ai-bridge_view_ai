@@ -1,8 +1,8 @@
 import type { DashboardLayout } from './types';
 
-export class ClaudeCoder {
+export class GeminiCoder {
   /**
-   * Generates Tailwind-styled React component code from the dashboard layout using Claude.
+   * Generates Tailwind-styled React component code from the dashboard layout using Gemini.
    */
   async generateCode(
     layout: DashboardLayout,
@@ -12,22 +12,22 @@ export class ClaudeCoder {
     log('Initiating React component code generation...', 'info');
 
     if (!apiKey || apiKey.trim() === '') {
-      log('Claude error', 'error');
-      throw new Error('Claude API key is required');
+      log('Gemini error', 'error');
+      throw new Error('Gemini API key is required');
     }
 
-    log('Delegating React code generation to Claude 3.5 Sonnet...', 'info');
+    log('Delegating React code generation to Gemini 2.5 Flash...', 'info');
     try {
-      const code = await this.queryClaudeAPI(layout, apiKey, log);
-      log('Claude completed code generation successfully.', 'info');
+      const code = await this.queryGeminiAPI(layout, apiKey, log);
+      log('Gemini completed code generation successfully.', 'info');
       return code;
-    } catch {
-      log('Claude error', 'error');
-      throw new Error('Claude API request failed');
+    } catch (err) {
+      log('Gemini error', 'error');
+      throw new Error(`Gemini API request failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  private async queryClaudeAPI(layout: DashboardLayout, apiKey: string, _log: (msg: string) => void): Promise<string> {
+  private async queryGeminiAPI(layout: DashboardLayout, apiKey: string, _log: (msg: string) => void): Promise<string> {
     const prompt = `You are a Principal React & Tailwind Code Generator Agent.
 Create a complete, single-file React component representing the following maritime dashboard layout.
 The component must be written in TypeScript, compile cleanly, and use Tailwind CSS styles.
@@ -48,30 +48,36 @@ Requirements for the generated code:
 
 Return ONLY raw TSX code. Do NOT wrap in markdown block quotes.`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-        'dangerously-allow-browser': 'true'
-      } as Record<string, string>,
-      body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt
+                }
+              ]
+            }
+          ]
+        })
+      }
+    );
 
     if (!response.ok) {
       const errText = await response.text();
-      throw new Error(`Claude API HTTP ${response.status}: ${errText}`);
+      throw new Error(`Gemini API HTTP ${response.status}: ${errText}`);
     }
 
     const data = await response.json();
-    let text = data.content?.[0]?.text;
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
-      throw new Error('Empty response from Claude API');
+      throw new Error('Empty response from Gemini API');
     }
 
     text = text

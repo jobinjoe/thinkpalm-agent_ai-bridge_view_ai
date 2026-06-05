@@ -1,6 +1,6 @@
 import { ensureLucideImports } from './tools';
 
-export class ClaudeInspector {
+export class GeminiInspector {
   /**
    * Reviews and refines React/Tailwind code to ensure it compiles and displays cleanly.
    */
@@ -12,18 +12,18 @@ export class ClaudeInspector {
     log('Initiating code inspection and syntax validation...', 'info');
 
     if (!apiKey || apiKey.trim() === '') {
-      log('Claude error', 'error');
-      throw new Error('Claude API key is required');
+      log('Gemini error', 'error');
+      throw new Error('Gemini API key is required');
     }
 
-    log('Requesting Claude API to perform UX audit and linting check...', 'info');
+    log('Requesting Gemini API to perform UX audit and linting check...', 'info');
     try {
-      const inspectedCode = await this.queryClaudeAPI(code, apiKey, log);
-      log('Claude UX review completed. Styling and compilation check passed.', 'info');
+      const inspectedCode = await this.queryGeminiAPI(code, apiKey, log);
+      log('Gemini UX review completed. Styling and compilation check passed.', 'info');
       return this.finalizeCode(inspectedCode, log);
-    } catch {
-      log('Claude error', 'error');
-      throw new Error('Claude API request failed');
+    } catch (err) {
+      log('Gemini error', 'error');
+      throw new Error(`Gemini API request failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
@@ -38,7 +38,7 @@ export class ClaudeInspector {
     return fixed;
   }
 
-  private async queryClaudeAPI(code: string, apiKey: string, _log: (msg: string) => void): Promise<string> {
+  private async queryGeminiAPI(code: string, apiKey: string, _log: (msg: string) => void): Promise<string> {
     const prompt = `You are a Senior UX Auditor and Linter Agent.
 Your role is to inspect the provided React TSX dashboard code.
 Verify tags, Tailwind classes, imports, and exports are correct. Correct any issues.
@@ -47,30 +47,36 @@ Return ONLY raw TSX code. Do NOT wrap in markdown block quotes.
 React Code to Inspect:
 ${code}`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-        'dangerously-allow-browser': 'true'
-      } as Record<string, string>,
-      body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt
+                }
+              ]
+            }
+          ]
+        })
+      }
+    );
 
     if (!response.ok) {
       const errText = await response.text();
-      throw new Error(`Claude API HTTP ${response.status}: ${errText}`);
+      throw new Error(`Gemini API HTTP ${response.status}: ${errText}`);
     }
 
     const data = await response.json();
-    let text = data.content?.[0]?.text;
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
-      throw new Error('Empty response from Claude API');
+      throw new Error('Empty response from Gemini API');
     }
 
     text = text

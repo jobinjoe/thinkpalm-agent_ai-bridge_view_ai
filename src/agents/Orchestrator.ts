@@ -1,12 +1,12 @@
-import { ClaudeArchitect } from './ClaudeArchitect';
-import { ClaudeCoder } from './ClaudeCoder';
-import { ClaudeInspector } from './ClaudeInspector';
+import { GeminiArchitect } from './GeminiArchitect';
+import { GeminiCoder } from './GeminiCoder';
+import { GeminiInspector } from './GeminiInspector';
 import type { PipelineSession, AgentMessage, LongTermMemoryItem } from './types';
 
 export class Orchestrator {
-  private architect = new ClaudeArchitect();
-  private coder = new ClaudeCoder();
-  private inspector = new ClaudeInspector();
+  private architect = new GeminiArchitect();
+  private coder = new GeminiCoder();
+  private inspector = new GeminiInspector();
 
   /**
    * Runs the collaborative agentic pipeline to build a maritime dashboard.
@@ -39,7 +39,7 @@ export class Orchestrator {
     };
 
     try {
-      addLog('System', 'info', 'Pipeline initialized. Allocating Claude agents...');
+      addLog('System', 'info', 'Pipeline initialized. Allocating Gemini agents...');
       
       // Step 1: Maritime Architect Agent
       session.status = 'analyzing';

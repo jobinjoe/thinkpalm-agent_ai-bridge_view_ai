@@ -51,13 +51,13 @@ function App() {
                 Mini Project
               </span>
             </h1>
-            <p className="text-[10px] text-slate-400 font-medium">ThinkPalm Maritime Claude Agent Pipeline</p>
+            <p className="text-[10px] text-slate-400 font-medium">ThinkPalm Maritime Gemini Agent Pipeline</p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2 bg-slate-950 border border-slate-850 px-3 py-1.5 rounded-lg text-[9px] text-slate-500 font-extrabold tracking-wider uppercase">
           <Cpu className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Claude 3.5 Sonnet Pipeline Ready</span>
+          <span>Gemini 2.5 Flash Pipeline Ready</span>
         </div>
       </header>
 

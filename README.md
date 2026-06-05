@@ -3,7 +3,7 @@
 
 BridgeView AI is an AI-powered software engineering accelerator designed for ThinkPalm engineers. It converts complex maritime Product Requirements Documents (PRDs) into interactive React dashboards built with TypeScript, Tailwind CSS, and Lucide icons. 
 
-The application utilizes a collaborative multi-agent pipeline powered by Claude 3.5 Sonnet to perform structural analysis, synthesize production-ready code, run quality control audits, and export functional developer workspaces to StackBlitz with a single click.
+The application utilizes a collaborative multi-agent pipeline powered by Gemini 2.5 Flash to perform structural analysis, synthesize production-ready code, run quality control audits, and export functional developer workspaces to StackBlitz with a single click.
 
 ---
 
@@ -27,12 +27,12 @@ The application utilizes a collaborative multi-agent pipeline powered by Claude 
 
 ```mermaid
 graph TD
-    PRD[Maritime PRD Input] --> Arch[1. Claude Maritime Architect]
+    PRD[Maritime PRD Input] --> Arch[1. Gemini Maritime Architect]
     Arch --> Schema[Widget Hierarchy & Layout Schema]
     Schema --> CTree[Component Tree Visualizer]
-    Schema --> Coder[2. Claude React Coder]
+    Schema --> Coder[2. Gemini React Coder]
     Coder --> CodeRaw[Raw TSX Component Code]
-    CodeRaw --> Insp[3. Claude UX Inspector & Auditor]
+    CodeRaw --> Insp[3. Gemini UX Inspector & Auditor]
     Insp --> CodeFinal[Inspected & Synced TSX Code]
     CodeFinal --> LivePrev[Interactive In-Browser Live Preview]
     CodeFinal --> StackBlitz[One-Click StackBlitz sandbox Export]
@@ -50,7 +50,7 @@ graph TD
 
 * **Framework**: React + TypeScript + Vite
 * **Styling**: Tailwind CSS + Glassmorphic UI Tokens + Lucide Icons
-* **Orchestrator LLM**: Anthropic Claude 3.5 Sonnet API
+* **Orchestrator LLM**: Google Gemini 2.5 Flash API
 * **Integration**: StackBlitz SDK (WebContainers)
 * **Storage**: Browser LocalStorage (Memory Registry)
 
@@ -61,7 +61,7 @@ graph TD
 ### Prerequisites
 * [Node.js](https://nodejs.org/) (v18+ recommended)
 * [npm](https://www.npmjs.com/)
-* Anthropic Claude API Key (Optional; required for live Claude generation. High-fidelity simulations are available as fallback).
+* Google Gemini API Key (Required for live generation).
 
 ### Steps
 1. **Clone the Repository**:
@@ -81,10 +81,9 @@ graph TD
    ```
    Open `http://localhost:5173` in your browser.
 
-4. **Claude Configuration**:
-   * Click **⚙️ Claude Settings** in the Requirements section.
-   * Paste your Anthropic API Key (`sk-ant-api03...`) to enable live multi-agent generation.
-   * *If no API key is provided, the application will run in simulation mode.*
+4. **Gemini Configuration**:
+   * Click **⚙️ Gemini Settings** in the Requirements section.
+   * Paste your Gemini API Key (`AIzaSy...`) to enable live multi-agent generation.
 
 ---
 
