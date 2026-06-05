@@ -1,4 +1,5 @@
 import type { DashboardLayout } from './types';
+import { callGeminiAPI } from './tools';
 
 export class GeminiArchitect {
   /**
@@ -16,7 +17,7 @@ export class GeminiArchitect {
       throw new Error('Gemini API key is required');
     }
 
-    log('Delegating analysis to Gemini 2.5 Flash...', 'info');
+    log('Delegating analysis to Gemini agents...', 'info');
     try {
       const result = await this.queryGeminiAPI(prdText, apiKey, log);
       log(
@@ -58,41 +59,7 @@ Output a JSON object matching this schema:
 PRD Spec:
 ${prdText}`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt
-                }
-              ]
-            }
-          ],
-          generationConfig: {
-            responseMimeType: 'application/json'
-          }
-        })
-      }
-    );
-
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Gemini API HTTP ${response.status}: ${errText}`);
-    }
-
-    const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      throw new Error('Empty response from Gemini API');
-    }
-
+    const text = await callGeminiAPI(prompt, apiKey, true);
     const result = JSON.parse(text.trim()) as DashboardLayout;
     return result;
   }

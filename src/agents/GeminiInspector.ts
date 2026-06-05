@@ -1,4 +1,4 @@
-import { ensureLucideImports } from './tools';
+import { ensureLucideImports, callGeminiAPI } from './tools';
 
 export class GeminiInspector {
   /**
@@ -47,37 +47,7 @@ Return ONLY raw TSX code. Do NOT wrap in markdown block quotes.
 React Code to Inspect:
 ${code}`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt
-                }
-              ]
-            }
-          ]
-        })
-      }
-    );
-
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Gemini API HTTP ${response.status}: ${errText}`);
-    }
-
-    const data = await response.json();
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      throw new Error('Empty response from Gemini API');
-    }
+    let text = await callGeminiAPI(prompt, apiKey, false);
 
     text = text
       .replace(/```typescript/g, '')

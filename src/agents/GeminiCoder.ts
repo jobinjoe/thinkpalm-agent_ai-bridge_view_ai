@@ -1,4 +1,5 @@
 import type { DashboardLayout } from './types';
+import { callGeminiAPI } from './tools';
 
 export class GeminiCoder {
   /**
@@ -16,7 +17,7 @@ export class GeminiCoder {
       throw new Error('Gemini API key is required');
     }
 
-    log('Delegating React code generation to Gemini 2.5 Flash...', 'info');
+    log('Delegating React code generation to Gemini agents...', 'info');
     try {
       const code = await this.queryGeminiAPI(layout, apiKey, log);
       log('Gemini completed code generation successfully.', 'info');
@@ -48,37 +49,7 @@ Requirements for the generated code:
 
 Return ONLY raw TSX code. Do NOT wrap in markdown block quotes.`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt
-                }
-              ]
-            }
-          ]
-        })
-      }
-    );
-
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Gemini API HTTP ${response.status}: ${errText}`);
-    }
-
-    const data = await response.json();
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      throw new Error('Empty response from Gemini API');
-    }
+    let text = await callGeminiAPI(prompt, apiKey, false);
 
     text = text
       .replace(/```typescript/g, '')
