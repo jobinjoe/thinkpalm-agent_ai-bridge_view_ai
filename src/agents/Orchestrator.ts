@@ -1,12 +1,12 @@
-import { GrokArchitect } from './GrokArchitect';
-import { GrokCoder } from './GrokCoder';
-import { GrokInspector } from './GrokInspector';
+import { LlamaArchitect } from './LlamaArchitect';
+import { LlamaCoder } from './LlamaCoder';
+import { LlamaInspector } from './LlamaInspector';
 import type { PipelineSession, AgentMessage, LongTermMemoryItem } from './types';
 
 export class Orchestrator {
-  private architect = new GrokArchitect();
-  private coder = new GrokCoder();
-  private inspector = new GrokInspector();
+  private architect = new LlamaArchitect();
+  private coder = new LlamaCoder();
+  private inspector = new LlamaInspector();
 
   /**
    * Runs the collaborative agentic pipeline to build a maritime dashboard.
@@ -39,7 +39,7 @@ export class Orchestrator {
     };
 
     try {
-      addLog('System', 'info', 'Pipeline initialized. Allocating Grok agents...');
+      addLog('System', 'info', 'Pipeline initialized. Allocating Llama agents...');
       
       // Step 1: Maritime Architect Agent
       session.status = 'analyzing';

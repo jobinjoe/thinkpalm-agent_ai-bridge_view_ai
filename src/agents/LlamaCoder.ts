@@ -1,9 +1,9 @@
 import type { DashboardLayout } from './types';
-import { callGrokAPI } from './tools';
+import { callLlamaAPI } from './tools';
 
-export class GrokCoder {
+export class LlamaCoder {
   /**
-   * Generates Tailwind-styled React component code from the dashboard layout using Grok.
+   * Generates Tailwind-styled React component code from the dashboard layout using Llama.
    */
   async generateCode(
     layout: DashboardLayout,
@@ -13,22 +13,22 @@ export class GrokCoder {
     log('Initiating React component code generation...', 'info');
 
     if (!apiKey || apiKey.trim() === '') {
-      log('Grok error', 'error');
-      throw new Error('Grok API key is required');
+      log('Llama error', 'error');
+      throw new Error('Llama API key is required');
     }
 
-    log('Delegating React code generation to Grok agents...', 'info');
+    log('Delegating React code generation to Llama agents...', 'info');
     try {
-      const code = await this.queryGrokAPI(layout, apiKey, log);
-      log('Grok completed code generation successfully.', 'info');
+      const code = await this.queryLlamaAPI(layout, apiKey, log);
+      log('Llama completed code generation successfully.', 'info');
       return code;
     } catch (err) {
-      log('Grok error', 'error');
-      throw new Error(`Grok API request failed: ${err instanceof Error ? err.message : String(err)}`);
+      log('Llama error', 'error');
+      throw new Error(`Llama API request failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  private async queryGrokAPI(layout: DashboardLayout, apiKey: string, _log: (msg: string) => void): Promise<string> {
+  private async queryLlamaAPI(layout: DashboardLayout, apiKey: string, _log: (msg: string) => void): Promise<string> {
     const prompt = `You are a Principal React & Tailwind Code Generator Agent.
 Create a complete, single-file React component representing the following maritime dashboard layout.
 The component must be written in TypeScript, compile cleanly, and use Tailwind CSS styles.
@@ -49,7 +49,7 @@ Requirements for the generated code:
 
 Return ONLY raw TSX code. Do NOT wrap in markdown block quotes.`;
 
-    let text = await callGrokAPI(prompt, apiKey, false);
+    let text = await callLlamaAPI(prompt, apiKey, false);
 
     text = text
       .replace(/```typescript/g, '')

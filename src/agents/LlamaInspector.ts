@@ -1,6 +1,6 @@
-import { ensureLucideImports, callGrokAPI } from './tools';
+import { ensureLucideImports, callLlamaAPI } from './tools';
 
-export class GrokInspector {
+export class LlamaInspector {
   /**
    * Reviews and refines React/Tailwind code to ensure it compiles and displays cleanly.
    */
@@ -12,18 +12,18 @@ export class GrokInspector {
     log('Initiating code inspection and syntax validation...', 'info');
 
     if (!apiKey || apiKey.trim() === '') {
-      log('Grok error', 'error');
-      throw new Error('Grok API key is required');
+      log('Llama error', 'error');
+      throw new Error('Llama API key is required');
     }
 
-    log('Requesting Grok API to perform UX audit and linting check...', 'info');
+    log('Requesting Llama API to perform UX audit and linting check...', 'info');
     try {
-      const inspectedCode = await this.queryGrokAPI(code, apiKey, log);
-      log('Grok UX review completed. Styling and compilation check passed.', 'info');
+      const inspectedCode = await this.queryLlamaAPI(code, apiKey, log);
+      log('Llama UX review completed. Styling and compilation check passed.', 'info');
       return this.finalizeCode(inspectedCode, log);
     } catch (err) {
-      log('Grok error', 'error');
-      throw new Error(`Grok API request failed: ${err instanceof Error ? err.message : String(err)}`);
+      log('Llama error', 'error');
+      throw new Error(`Llama API request failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
@@ -38,7 +38,7 @@ export class GrokInspector {
     return fixed;
   }
 
-  private async queryGrokAPI(code: string, apiKey: string, _log: (msg: string) => void): Promise<string> {
+  private async queryLlamaAPI(code: string, apiKey: string, _log: (msg: string) => void): Promise<string> {
     const prompt = `You are a Senior UX Auditor and Linter Agent.
 Your role is to inspect the provided React TSX dashboard code.
 Verify tags, Tailwind classes, imports, and exports are correct. Correct any issues.
@@ -47,7 +47,7 @@ Return ONLY raw TSX code. Do NOT wrap in markdown block quotes.
 React Code to Inspect:
 ${code}`;
 
-    let text = await callGrokAPI(prompt, apiKey, false);
+    let text = await callLlamaAPI(prompt, apiKey, false);
 
     text = text
       .replace(/```typescript/g, '')

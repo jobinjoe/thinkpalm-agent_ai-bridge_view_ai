@@ -163,29 +163,42 @@ export function getTelemetrySchema(vesselType: string): TelemetryField[] {
   ];
 }
 
-export async function callGrokAPI(
+/**
+ * Calls a free Llama model using Groq API (free key) or OpenRouter (free key/models).
+ * By default, targets Groq's 'llama-3.3-70b-versatile' or OpenRouter's 'meta-llama/llama-3-8b-instruct:free'.
+ */
+export async function callLlamaAPI(
   prompt: string,
   apiKey: string,
   responseJson: boolean = false
 ): Promise<string> {
-  const response = await fetch("https://api.x.ai/v1/chat/completions", {
-    method: "POST",
+  const isGroq = apiKey.startsWith('gsk_') || !apiKey.startsWith('sk-or-');
+  const endpoint = isGroq 
+    ? 'https://api.groq.com/openai/v1/chat/completions' 
+    : 'https://openrouter.ai/api/v1/chat/completions';
+  
+  const model = isGroq 
+    ? 'llama-3.3-70b-versatile' 
+    : 'meta-llama/llama-3-8b-instruct:free';
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: "grok-3",
+      model: model,
       messages: [
         {
-          role: "user",
-          content: prompt,
-        },
+          role: 'user',
+          content: prompt
+        }
       ],
       temperature: 0.3,
       max_tokens: 4000,
-      ...(responseJson ? { response_format: { type: "json_object" } } : {}),
-    }),
+      ...(responseJson ? { response_format: { type: 'json_object' } } : {})
+    })
   });
 
   if (!response.ok) {
@@ -194,13 +207,13 @@ export async function callGrokAPI(
       const errorData = await response.json();
       errorMessage = errorData.error?.message || response.statusText;
     } catch {}
-    throw new Error(`Grok API Error: ${errorMessage}`);
+    throw new Error(`Llama API Error (${model}): ${errorMessage}`);
   }
 
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content;
   if (!content) {
-    throw new Error("Empty response from Grok model");
+    throw new Error('Empty response from Llama model');
   }
   return content;
 }

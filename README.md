@@ -3,7 +3,7 @@
 
 BridgeView AI is an AI-powered software engineering accelerator designed for ThinkPalm engineers. It converts complex maritime Product Requirements Documents (PRDs) into interactive React dashboards built with TypeScript, Tailwind CSS, and Lucide icons. 
 
-The application utilizes a collaborative multi-agent pipeline powered by Grok 3 to perform structural analysis, synthesize production-ready code, run quality control audits, and export functional developer workspaces to StackBlitz with a single click.
+The application utilizes a collaborative multi-agent pipeline powered by Llama 3 to perform structural analysis, synthesize production-ready code, run quality control audits, and export functional developer workspaces to StackBlitz with a single click.
 
 ---
 
@@ -27,12 +27,12 @@ The application utilizes a collaborative multi-agent pipeline powered by Grok 3 
 
 ```mermaid
 graph TD
-    PRD[Maritime PRD Input] --> Arch[1. Grok Maritime Architect]
+    PRD[Maritime PRD Input] --> Arch[1. Llama Maritime Architect]
     Arch --> Schema[Widget Hierarchy & Layout Schema]
     Schema --> CTree[Component Tree Visualizer]
-    Schema --> Coder[2. Grok React Coder]
+    Schema --> Coder[2. Llama React Coder]
     Coder --> CodeRaw[Raw TSX Component Code]
-    CodeRaw --> Insp[3. Grok UX Inspector & Auditor]
+    CodeRaw --> Insp[3. Llama UX Inspector & Auditor]
     Insp --> CodeFinal[Inspected & Synced TSX Code]
     CodeFinal --> LivePrev[Interactive In-Browser Live Preview]
     CodeFinal --> StackBlitz[One-Click StackBlitz sandbox Export]
@@ -50,7 +50,7 @@ graph TD
 
 * **Framework**: React + TypeScript + Vite
 * **Styling**: Tailwind CSS + Glassmorphic UI Tokens + Lucide Icons
-* **Orchestrator LLM**: xAI Grok 3 API
+* **Orchestrator LLM**: Meta Llama 3 API (Groq / OpenRouter)
 * **Integration**: StackBlitz SDK (WebContainers)
 * **Storage**: Browser LocalStorage (Memory Registry)
 
@@ -61,7 +61,7 @@ graph TD
 ### Prerequisites
 * [Node.js](https://nodejs.org/) (v18+ recommended)
 * [npm](https://www.npmjs.com/)
-* xAI Grok API Key (Required for live generation).
+* Groq or OpenRouter API Key (Required for live generation).
 
 ### Steps
 1. **Clone the Repository**:
@@ -81,9 +81,9 @@ graph TD
    ```
    Open `http://localhost:5173` in your browser.
 
-4. **Grok Configuration**:
-   * Click **⚙️ Grok Settings** in the Requirements section.
-   * Paste your Grok API Key (`xai-...`) to enable live multi-agent generation.
+4. **Llama Configuration**:
+   * Click **⚙️ Llama Settings** in the Requirements section.
+   * Paste your Groq (`gsk_...`) or OpenRouter (`sk-or-v1-...`) API Key to enable live multi-agent generation.
 
 ---
 

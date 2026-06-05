@@ -1,10 +1,7 @@
 import type { DashboardLayout } from './types';
-import { callGrokAPI } from './tools';
+import { callLlamaAPI } from './tools';
 
-export class GrokArchitect {
-  /**
-   * Analyzes maritime PRD text and converts it into a structured layout design using Grok.
-   */
+export class LlamaArchitect {
   async analyzePRD(
     prdText: string,
     apiKey: string | undefined,
@@ -13,27 +10,30 @@ export class GrokArchitect {
     log('Starting analysis of the Maritime PRD spec...', 'info');
 
     if (!apiKey || apiKey.trim() === '') {
-      log('Grok error', 'error');
-      throw new Error('Grok API key is required');
+      log('Llama error', 'error');
+      throw new Error('Llama API key is required');
     }
 
-    log('Delegating analysis to Grok agents...', 'info');
+    log('Delegating analysis to Llama agents...', 'info');
+
     try {
-      const result = await this.queryGrokAPI(prdText, apiKey, log);
+      const result = await this.queryLlamaAPI(prdText, apiKey);
       log(
-        `Grok completed analysis. Formulated dashboard layout: "${result.title}" with ${result.widgets.length} components.`,
+        `Llama completed analysis. Formulated dashboard layout: "${result.title}" with ${result.widgets.length} components.`,
         'info'
       );
       return result;
     } catch (err) {
-      log('Grok error', 'error');
-      throw new Error(`Grok API request failed: ${err instanceof Error ? err.message : String(err)}`);
+      log('Llama error', 'error');
+      throw new Error(`Llama API request failed: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  private async queryGrokAPI(prdText: string, apiKey: string, _log: (msg: string) => void): Promise<DashboardLayout> {
+  private async queryLlamaAPI(prdText: string, apiKey: string): Promise<DashboardLayout> {
     const prompt = `You are a Senior Maritime Software Architect Agent at ThinkPalm.
 Analyze the provided Product Requirements Document (PRD) text and design an interactive dashboard layout.
+
+IMPORTANT: Respond with ONLY valid JSON. Do not add any explanation or markdown.
 
 Output a JSON object matching this schema:
 {
@@ -59,8 +59,10 @@ Output a JSON object matching this schema:
 PRD Spec:
 ${prdText}`;
 
-    const text = await callGrokAPI(prompt, apiKey, true);
-    const result = JSON.parse(text.trim()) as DashboardLayout;
+    const text = await callLlamaAPI(prompt, apiKey, true);
+    const cleanedText = text.trim().replace(/```json|```/g, '').trim();
+    const result = JSON.parse(cleanedText) as DashboardLayout;
+
     return result;
   }
 }
