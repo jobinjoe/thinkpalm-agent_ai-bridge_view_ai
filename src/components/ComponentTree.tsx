@@ -4,7 +4,7 @@ import {
   buildComponentTree,
   formatComponentTreeOutline,
   type ComponentTreeNode,
-} from '../agents/componentTree';
+} from '../agents/ComponentTree';
 import {
   ChevronDown,
   ChevronRight,
