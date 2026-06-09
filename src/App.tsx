@@ -142,7 +142,7 @@ function App() {
             <div className="flex-1 flex flex-col min-h-64">
               {activeTab === 'preview' && (
                 <div className="flex-1 flex flex-col min-h-0">
-                  {isLoading && !session.layout ? (
+                  {isLoading && !session.code ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-slate-500 text-center py-20">
                       <RefreshCw className="w-8 h-8 text-indigo-500 animate-spin mb-3" />
                       <h4 className="text-white text-xs font-bold uppercase tracking-wider">Compiling Components...</h4>
@@ -151,7 +151,7 @@ function App() {
                       </p>
                     </div>
                   ) : (
-                    <DashboardPreview layout={session.layout} />
+                    <DashboardPreview code={session.code} title={session.layout?.title} />
                   )}
                 </div>
               )}

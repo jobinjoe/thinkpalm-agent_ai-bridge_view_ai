@@ -40,22 +40,26 @@ export class Orchestrator {
 
     try {
       addLog('System', 'info', 'Pipeline initialized. Allocating Llama agents...');
-      
+
       // Step 1: Maritime Architect Agent
+      addLog('System', 'info', 'Waiting 30 seconds to respect Llama API rate limits...');
+      await new Promise(resolve => setTimeout(resolve, 30000));
       session.status = 'analyzing';
       session.currentStep = '1. Structural Analysis (Architect Agent)';
       onStateChange({ ...session });
-      
+
       const layout = await this.architect.analyzePRD(
         prdText,
         apiKey,
         (msg, type = 'info') => addLog('Architect', type, msg)
       );
-      
+
       session.layout = layout;
       addLog('System', 'info', 'Architect Agent completed analysis. Handoff to React Coder Agent...');
 
       // Step 2: React Coder Agent
+      addLog('System', 'info', 'Waiting 30 seconds to respect Llama API rate limits...');
+      await new Promise(resolve => setTimeout(resolve, 30000));
       session.status = 'coding';
       session.currentStep = '2. Code Synthesis (Coder Agent)';
       onStateChange({ ...session });
@@ -69,6 +73,8 @@ export class Orchestrator {
       addLog('System', 'info', 'Coder Agent finished coding. Handoff to UX Inspector Agent...');
 
       // Step 3: UX Inspector Agent
+      addLog('System', 'info', 'Waiting 30 seconds to respect Llama API rate limits...');
+      await new Promise(resolve => setTimeout(resolve, 30000));
       session.status = 'verifying';
       session.currentStep = '3. Inspection & Audit (Inspector Agent)';
       onStateChange({ ...session });
@@ -80,7 +86,7 @@ export class Orchestrator {
       );
 
       session.code = finalCode;
-      
+
       // Step 4: Long-Term Memory Storage
       addLog('System', 'info', 'Updating Long-Term Memory registry...');
       this.saveToLongTermMemory(layout.title, layout.widgets.length, layout.widgets[0]?.color || 'blue');
@@ -103,7 +109,7 @@ export class Orchestrator {
     try {
       const memoryRaw = localStorage.getItem('bridgeview_mini_ltm');
       const memory: LongTermMemoryItem[] = memoryRaw ? JSON.parse(memoryRaw) : [];
-      
+
       const newItem: LongTermMemoryItem = {
         id: Math.random().toString(36).substring(7),
         prdTitle: title,
@@ -111,7 +117,7 @@ export class Orchestrator {
         timestamp: new Date().toLocaleString(),
         primaryColor
       };
-      
+
       const updatedMemory = [newItem, ...memory].slice(0, 10);
       localStorage.setItem('bridgeview_mini_ltm', JSON.stringify(updatedMemory));
     } catch (e) {
@@ -131,6 +137,6 @@ export class Orchestrator {
   static clearMemory() {
     try {
       localStorage.removeItem('bridgeview_mini_ltm');
-    } catch {}
+    } catch { }
   }
 }

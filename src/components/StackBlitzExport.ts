@@ -1,16 +1,11 @@
 import sdk from '@stackblitz/sdk';
 import { ensureLucideImports } from '../agents/tools';
 
-/**
- * Packages the generated component into a full Vite + Tailwind v4 project payload 
- * and opens it in StackBlitz via browser WebContainers.
- */
-export function exportToStackBlitz(title: string, description: string, reactCode: string) {
+function buildStackBlitzProject(title: string, reactCode: string): any {
   const appCode = ensureLucideImports(reactCode);
-
-  sdk.openProject({
+  return {
     title: title,
-    description: description,
+    description: title,
     template: 'node',
     files: {
       'package.json': JSON.stringify({
@@ -38,46 +33,10 @@ export function exportToStackBlitz(title: string, description: string, reactCode
           '@types/react-dom': '^18.3.0'
         }
       }, null, 2),
-      'vite.config.ts': `import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-});`,
-      'index.html': `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${title}</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>`,
-      'src/main.tsx': `import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);`,
-      'src/index.css': `@import "tailwindcss";
-
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #0b132b;
-  color: #f3f4f6;
-  font-family: ui-sans-serif, system-ui, sans-serif;
-}`,
+      'vite.config.ts': `import { defineConfig } from 'vite';\nimport react from '@vitejs/plugin-react';\nimport tailwindcss from '@tailwindcss/vite';\n\nexport default defineConfig({\n  plugins: [react(), tailwindcss()],\n});`,
+      'index.html': `<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <title>${title}</title>\n  </head>\n  <body>\n    <div id="root"></div>\n    <script type="module" src="/src/main.tsx"></script>\n  </body>\n</html>`,
+      'src/main.tsx': `import React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport App from './App.tsx';\nimport './index.css';\n\nReactDOM.createRoot(document.getElementById('root')!).render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>,\n);`,
+      'src/index.css': `@import "tailwindcss";\n\nhtml, body, #root {\n  margin: 0;\n  padding: 0;\n  width: 100%;\n  height: 100%;\n  background-color: #0b132b;\n  color: #f3f4f6;\n  font-family: ui-sans-serif, system-ui, sans-serif;\n}`,
       'src/App.tsx': appCode,
       'tsconfig.json': JSON.stringify({
         compilerOptions: {
@@ -100,9 +59,32 @@ html, body, #root {
         include: ['src']
       }, null, 2)
     }
-  }, {
+  };
+}
+
+/**
+ * Packages the generated component into a full Vite + Tailwind v4 project payload 
+ * and opens it in StackBlitz via browser WebContainers.
+ */
+export function exportToStackBlitz(title: string, description: string, reactCode: string) {
+  const project = buildStackBlitzProject(title, reactCode);
+  sdk.openProject(project, {
     newWindow: true,
     openFile: 'src/App.tsx',
     startScript: 'dev'
+  });
+}
+
+/**
+ * Embeds the StackBlitz project directly into a DOM element for live preview.
+ */
+export function embedInStackBlitz(elementId: string, title: string, reactCode: string) {
+  const project = buildStackBlitzProject(title, reactCode);
+  sdk.embedProject(elementId, project, {
+    openFile: 'src/App.tsx',
+    view: 'preview',
+    hideNavigation: true,
+    hideExplorer: true,
+    forceEmbedLayout: true
   });
 }
