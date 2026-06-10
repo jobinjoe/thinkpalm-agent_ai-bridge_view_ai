@@ -15,9 +15,9 @@ The application utilizes a collaborative multi-agent pipeline powered by Llama 3
   2. **React Coder Agent**: Synthesizes a pixel-perfect, interactive, responsive React components tree styled with glassmorphic Tailwind CSS variables.
   3. **UX Inspector & Auditor Agent**: Automatically conducts JSX verification, lints components, and validates syntax structure.
 * **Component Tree Hierarchy Visualizer**: Real-time rendering of the generated React widget tree, props list, and state management hooks.
-* **Live In-Browser Preview**: Render and interact with the generated React dashboard inside the client browser. Control telemetry sliders (e.g. RPM / fuel rate), select propulsion modes, and acknowledge active critical alarms in real time.
+* **Live In-Browser Preview**: Render and interact with the generated React dashboard inside the client browser. Powered by **`react-live`** for instantaneous, 100% offline component rendering without third-party WebContainers or network requests. Control telemetry sliders, select propulsion modes, and acknowledge alarms in real time.
 * **Code Exporter**: View syntax-highlighted React source code and copy or download it.
-* **StackBlitz SDK Integration**: Instantly bundle the generated code into a full, pre-configured Vite + Tailwind v4 + TypeScript workspace and launch it in StackBlitz with one click.
+* **StackBlitz SDK Integration**: Instantly bundle the generated code into a full, pre-configured Vite + Tailwind v4 + TypeScript workspace and launch it in StackBlitz with one click for easy sharing or deployment.
 * **Telemetry Schema Tooling**: Seamlessly registers ship type context mapping keywords like "oil tanker," "crew welfare," or "ballast" to recommended data metrics.
 * **Long-Term Memory Persistence**: Retains previous dashboard layouts and telemetry parameters across browser sessions using local storage registries.
 
@@ -34,7 +34,7 @@ graph TD
     Coder --> CodeRaw[Raw TSX Component Code]
     CodeRaw --> Insp[3. Llama UX Inspector & Auditor]
     Insp --> CodeFinal[Inspected & Synced TSX Code]
-    CodeFinal --> LivePrev[Interactive In-Browser Live Preview]
+    CodeFinal --> LivePrev[Interactive In-Browser Live Preview via React-Live]
     CodeFinal --> StackBlitz[One-Click StackBlitz sandbox Export]
     
     subgraph Tools & Context

@@ -217,3 +217,103 @@ export async function callLlamaAPI(
   }
   return content;
 }
+
+/**
+ * Supports native LLM Tool Calling (Function Calling).
+ * Evaluates tools locally and passes the result back to the LLM until it finishes.
+ */
+export async function callLlamaWithTools(
+  initialPrompt: string,
+  apiKey: string,
+  tools: any[],
+  executeTool: (toolName: string, args: any) => any,
+  log?: (msg: string, type?: 'tool_call' | 'tool_response' | 'info') => void
+): Promise<string> {
+  const isGroq = apiKey.startsWith('gsk_') || !apiKey.startsWith('sk-or-');
+  const endpoint = isGroq 
+    ? 'https://api.groq.com/openai/v1/chat/completions' 
+    : 'https://openrouter.ai/api/v1/chat/completions';
+  
+  const model = isGroq 
+    ? 'llama-3.3-70b-versatile' 
+    : 'meta-llama/llama-3-8b-instruct:free';
+
+  let messages: any[] = [
+    { role: 'user', content: initialPrompt }
+  ];
+
+  let loopCount = 0;
+  const maxLoops = 5;
+
+  while (loopCount < maxLoops) {
+    loopCount++;
+    
+    const payload = {
+      model: model,
+      messages: messages,
+      temperature: 0.1,
+      max_tokens: 4000,
+      tools: tools,
+      tool_choice: 'auto'
+    };
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      let errorMessage = response.statusText;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error?.message || response.statusText;
+      } catch {}
+      throw new Error(`Llama Tool API Error (${model}): ${errorMessage}`);
+    }
+
+    const data = await response.json();
+    const message = data.choices?.[0]?.message;
+
+    if (!message) {
+      throw new Error('Empty response from Llama model');
+    }
+
+    // If no tool calls, the LLM has given us the final response!
+    if (!message.tool_calls || message.tool_calls.length === 0) {
+      return message.content || '';
+    }
+
+    // It wants to call a tool! We must execute it and append the result.
+    messages.push(message);
+
+    for (const toolCall of message.tool_calls) {
+      const functionName = toolCall.function.name;
+      const functionArgs = JSON.parse(toolCall.function.arguments);
+      
+      if (log) {
+        log(`Architect Agent paused execution to invoke tool: ${functionName}(${JSON.stringify(functionArgs)})`, 'tool_call');
+      }
+
+      // Execute the local tool
+      const toolResult = executeTool(functionName, functionArgs);
+
+      if (log) {
+        log(`Tool ${functionName} returned ${Array.isArray(toolResult) ? toolResult.length : 1} telemetry fields. Returning data to Architect Agent...`, 'tool_response');
+      }
+
+      // Append the tool response to the messages
+      messages.push({
+        tool_call_id: toolCall.id,
+        role: 'tool',
+        name: functionName,
+        content: JSON.stringify(toolResult)
+      });
+    }
+  }
+
+  throw new Error('Llama Agent exceeded maximum tool calling loops.');
+}
