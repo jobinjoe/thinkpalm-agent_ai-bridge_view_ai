@@ -1,0 +1,16 @@
+graph TD
+    PRD[Maritime PRD Input] --> Arch[1. Llama Maritime Architect]
+    Arch --> Schema[Widget Hierarchy & Layout Schema]
+    Schema --> CTree[Component Tree Visualizer]
+    Schema --> Coder[2. Llama React Coder]
+    Coder --> CodeRaw[Raw TSX Component Code]
+    CodeRaw --> Insp[3. Llama UX Inspector & Auditor]
+    Insp --> CodeFinal[Inspected & Synced TSX Code]
+    CodeFinal --> LivePrev[Interactive In-Browser Live Preview via React-Live]
+    CodeFinal --> StackBlitz[One-Click StackBlitz sandbox Export]
+    
+    subgraph Tools & Context
+        SchemaTool[Telemetry Schema Tool] -.-> Arch
+        IconTool[Lucide Icon Selector Tool] -.-> Arch
+        Memory[Long-Term Memory registry] -.-> LivePrev
+    end

@@ -1,9 +1,29 @@
 # BridgeView AI ⚓
 ### ThinkPalm Maritime Product Requirements Agentic Pipeline
 
-BridgeView AI is an AI-powered software engineering accelerator designed for ThinkPalm engineers. It converts complex maritime Product Requirements Documents (PRDs) into interactive React dashboards built with TypeScript, Tailwind CSS, and Lucide icons. 
+**Project Name**: BridgeView AI  
+**Problem Statement**: BridgeView AI is an AI-powered software engineering accelerator designed for ThinkPalm engineers. It converts complex maritime Product Requirements Documents (PRDs) into interactive React dashboards built with TypeScript, Tailwind CSS, and Lucide icons. The application utilizes a collaborative multi-agent pipeline powered by Llama 3 to perform structural analysis, synthesize production-ready code, run quality control audits, and export functional developer workspaces to StackBlitz with a single click.
 
-The application utilizes a collaborative multi-agent pipeline powered by Llama 3 to perform structural analysis, synthesize production-ready code, run quality control audits, and export functional developer workspaces to StackBlitz with a single click.
+---
+
+## 👥 Team Members & Contributions
+
+* **Jobin P L**: Development
+* **Anuraj Thomas**: Development
+* **Ajold Martin Jose**: UI (User Interface) Prioritization
+
+---
+
+## 📦 Tech Stack & Versions
+
+* **Framework**: React (^19.2.6) + Vite (^8.0.12)
+* **Language**: TypeScript (~6.0.2)
+* **Styling**: Tailwind CSS (^4.3.0) + Glassmorphic UI Tokens
+* **Icons**: Lucide React (^1.17.0)
+* **Orchestrator LLM**: Meta Llama 3 API (Groq / OpenRouter)
+* **Integration**: StackBlitz SDK (^1.11.0)
+* **Live Rendering**: React-Live (^4.1.8)
+* **Storage**: Browser LocalStorage (Memory Registry)
 
 ---
 
@@ -24,6 +44,8 @@ The application utilizes a collaborative multi-agent pipeline powered by Llama 3
 ---
 
 ## 🛠️ Architecture Flow
+
+Please refer to the `docs/` folder for a detailed Architecture Diagram (`architecture.png`) and the Architecture Write-up (`architecture_writeup.md`).
 
 ```mermaid
 graph TD
@@ -46,17 +68,7 @@ graph TD
 
 ---
 
-## 📦 Tech Stack
-
-* **Framework**: React + TypeScript + Vite
-* **Styling**: Tailwind CSS + Glassmorphic UI Tokens + Lucide Icons
-* **Orchestrator LLM**: Meta Llama 3 API (Groq / OpenRouter)
-* **Integration**: StackBlitz SDK (WebContainers)
-* **Storage**: Browser LocalStorage (Memory Registry)
-
----
-
-## 💻 Setup & Local Development
+## 💻 Step-by-Step: How to Run Locally
 
 ### Prerequisites
 * [Node.js](https://nodejs.org/) (v18+ recommended)
@@ -87,10 +99,11 @@ graph TD
 
 ---
 
-## 📹 Demo Video & Presentation
+## 📹 Demo Video
 
-* **Demo Video Link**: [Insert Loom / YouTube Link Here]
-  *(An 8-minute walkthrough demonstrating requirements pasting, agent collaboration logs, component tree traversal, interactive widget states, and the export flow to StackBlitz).*
+**5-min Loom Demo**: [Watch the BridgeView AI Demo](https://www.loom.com/share/b269be8ea9c3431fb77096fab5e5349c)
+
+*(A walkthrough demonstrating requirements pasting, agent collaboration logs, component tree traversal, interactive widget states, and the export flow to StackBlitz).*
 
 ---
 
